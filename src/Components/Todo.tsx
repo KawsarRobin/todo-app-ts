@@ -1,3 +1,5 @@
+import { Box, Heading, Text } from '@chakra-ui/react';
+
 const Todo = ({
   todo,
 }: {
@@ -6,7 +8,12 @@ const Todo = ({
     works: string;
   };
 }) => {
-  return <div>{todo.name}</div>;
+  return (
+    <Box p={5} shadow="md" borderWidth="1px">
+      <Heading fontSize="xl">{todo.name}</Heading>
+      <Text mt={4}>{todo.works}</Text>
+    </Box>
+  );
 };
 
 export default Todo;

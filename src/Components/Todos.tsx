@@ -1,6 +1,6 @@
-import { Button, Input, Text, Textarea } from '@chakra-ui/react';
+import { Button, Grid, Input, Text, Textarea } from '@chakra-ui/react';
 import { useReducer, useRef } from 'react';
-import Todo from './Components/Todo';
+import Todo from './Todo';
 const Todos = () => {
   // Interfaces for todos
   interface Todo {
@@ -84,11 +84,20 @@ const Todos = () => {
           Add Todo
         </Button>
       </form>
-      <div>
+      <Grid
+        mt={10}
+        templateColumns={{
+          base: 'repeat(1, 1fr)',
+          sm: 'repeat(2, 1fr)',
+          md: 'repeat(3, 1fr)',
+          lg: 'repeat(4, 1fr)',
+        }}
+        gap={{ base: '5', sm: '5', md: '6', lg: '6' }}
+      >
         {todos.map((todo) => (
           <Todo key={todo.id} todo={todo.text}></Todo>
         ))}
-      </div>
+      </Grid>
     </div>
   );
 };
