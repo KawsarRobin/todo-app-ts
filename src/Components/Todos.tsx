@@ -1,7 +1,11 @@
 import { Button, Grid, Input, Text, Textarea } from '@chakra-ui/react';
-import { useReducer, useRef } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import Todo from './Todo';
 const Todos = () => {
+  interface TodoArr {
+    name?: string;
+    works?: string;
+  }
   // Interfaces for todos
   interface Todo {
     id: number;
@@ -24,6 +28,8 @@ const Todos = () => {
         id: number;
       };
 
+  const [allTodosState, SetAllTodosState] = useState<any>([]);
+
   function reducer(state: Todo[], action: TodoActionType) {
     switch (action.type) {
       case 'ADD':
@@ -41,6 +47,27 @@ const Todos = () => {
         return state.filter(({ id }) => id !== action.id);
     }
   }
+
+  //Add to localStorage
+  const addToLS = (key: any, newTodo: {}) => {
+    let todoArr: TodoArr[] = [];
+    if (!localStorage.getItem(key)) {
+      todoArr.push(newTodo);
+      localStorage.setItem('todoStore', JSON.stringify(todoArr));
+      SetAllTodosState(todoArr);
+    } else {
+      const AllTodos = JSON.parse(localStorage.getItem(key)!);
+      const newTodoArr = [...AllTodos, newTodo];
+      localStorage.setItem('todoStore', JSON.stringify(newTodoArr));
+      SetAllTodosState(newTodoArr);
+    }
+  };
+
+  useEffect(() => {
+    const AllTodos = JSON.parse(localStorage.getItem('todoStore')!);
+    SetAllTodosState(AllTodos);
+  }, []);
+
   const todoNameRef = useRef<HTMLInputElement>(null);
   const todoWorksRef = useRef<HTMLTextAreaElement>(null);
   const addNewTodo = (e: any) => {
@@ -53,6 +80,11 @@ const Todos = () => {
           works: todoWorksRef.current?.value,
         },
       });
+      const newTodo = {
+        name: todoNameRef.current.value,
+        works: todoWorksRef.current.value,
+      };
+      addToLS('todoStore', newTodo);
       todoNameRef.current.value = '';
       todoWorksRef.current.value = '';
     }
@@ -71,9 +103,11 @@ const Todos = () => {
           placeholder="Todo Name"
           ref={todoNameRef}
           size="lg"
+          required
         />
         <br />
         <Textarea
+          required
           width="50%"
           mb={5}
           ref={todoWorksRef}
@@ -94,8 +128,8 @@ const Todos = () => {
         }}
         gap={{ base: '5', sm: '5', md: '6', lg: '6' }}
       >
-        {todos.map((todo) => (
-          <Todo key={todo.id} todo={todo.text}></Todo>
+        {allTodosState?.map((todo: any, index: number) => (
+          <Todo key={index} todo={todo}></Todo>
         ))}
       </Grid>
     </div>
