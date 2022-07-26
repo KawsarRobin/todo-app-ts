@@ -81,6 +81,7 @@ const Todos = () => {
         },
       });
       const newTodo = {
+        id: Math.random(),
         name: todoNameRef.current.value,
         works: todoWorksRef.current.value,
       };
@@ -89,7 +90,18 @@ const Todos = () => {
       todoWorksRef.current.value = '';
     }
   };
-
+  //Remove form todo
+  const removeTodo = (type: string, id: number) => {
+    const removerId = id;
+    const AllTodos = JSON.parse(localStorage.getItem('todoStore')!);
+    if (type && id) {
+      let newTodos = AllTodos.filter(
+        ({ id }: { id: number }) => id !== removerId
+      );
+      localStorage.setItem('todoStore', JSON.stringify(newTodos));
+      SetAllTodosState(newTodos);
+    }
+  };
   const [todos, dispatch] = useReducer(reducer, []);
   return (
     <div>
@@ -129,7 +141,7 @@ const Todos = () => {
         gap={{ base: '5', sm: '5', md: '6', lg: '6' }}
       >
         {allTodosState?.map((todo: any, index: number) => (
-          <Todo key={index} todo={todo}></Todo>
+          <Todo key={index} todo={todo} removeTodo={removeTodo}></Todo>
         ))}
       </Grid>
     </div>
